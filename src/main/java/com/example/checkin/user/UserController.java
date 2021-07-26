@@ -1,7 +1,5 @@
-package com.example.checkin.user.controller;
+package com.example.checkin.user;
 
-import com.example.checkin.user.entity.User;
-import com.example.checkin.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,10 +32,34 @@ public class UserController {
     /**
      * @return user with userId
      */
-    @GetMapping(path = "{userId}")
+    @GetMapping(path = "find/{userId}")
     public ResponseEntity<User> getUserById(@PathVariable("userId") Long userId){
         User user = userService.findUserById(userId);
         return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "find/guests")
+    public ResponseEntity<List<User>> getAllGuests () {
+        List<User> users = userService.findAllGuests();
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "find/students")
+    public ResponseEntity<List<User>> getAllStudents () {
+        List<User> users = userService.findAllStudents();
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "find/teachers")
+    public ResponseEntity<List<User>> getAllTeachers () {
+        List<User> users = userService.findAllTeachers();
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "find/admins")
+    public ResponseEntity<List<User>> getAllAdmins () {
+        List<User> users = userService.findAllAdmins();
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
 }
