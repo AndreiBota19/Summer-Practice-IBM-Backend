@@ -1,4 +1,4 @@
-package com.example.checkin.user.entity;
+package com.example.checkin.user;
 
 public enum UserRole {
     GUEST,

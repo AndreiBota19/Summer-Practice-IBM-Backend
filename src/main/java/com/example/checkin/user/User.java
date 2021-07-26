@@ -1,4 +1,4 @@
-package com.example.checkin.user.entity;
+package com.example.checkin.user;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -22,15 +22,15 @@ public class User implements Serializable {
     @Column(nullable = false)
     private String lastName;
 
-    private int year;
+    private Integer year;
     private String department;
     private String section;
-    private int group;
+    private Integer group;
 
     public User() {
     }
 
-    public User(UserRole role, String firstName, String lastName, int year, String department, String section, int group) {
+    public User(UserRole role, String firstName, String lastName, Integer year, String department, String section, Integer group) {
         this.role = role;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -72,7 +72,7 @@ public class User implements Serializable {
         this.lastName = lastName;
     }
 
-    public int getYear() {
+    public Integer getYear() {
         return year;
     }
 
@@ -96,7 +96,7 @@ public class User implements Serializable {
         this.section = section;
     }
 
-    public int getGroup() {
+    public Integer getGroup() {
         return group;
     }
 
