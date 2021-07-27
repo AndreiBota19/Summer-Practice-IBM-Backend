@@ -2,10 +2,13 @@ package com.example.checkin.user;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class UserService {
 
     private final UserRepository userRepository;
@@ -14,8 +17,10 @@ public class UserService {
         this.userRepository = userRepo;
     }
 
-    public List<User> findAllUsers(){
-        return userRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
+    public List<UserDTO> findAllUsers(){
+
+        List<User> users = userRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
+        return mapEntitiesToDTO(users);
     }
 
     public User findUserById(Long id){
@@ -36,6 +41,19 @@ public class UserService {
 
     public List<User> findAllAdmins(){
         return userRepository.findAllByRole(UserRole.ADMIN);
+    }
+
+    public UserDTO mapEntityToDto(User user){
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(user.getId());
+        userDTO.setRole(user.getRole());
+        userDTO.setFirstName(user.getFirstName());
+        userDTO.setLastName(user.getLastName());
+        return userDTO;
+    }
+
+    public List<UserDTO> mapEntitiesToDTO(List<User> users){
+        return users.stream().map(this::mapEntityToDto).collect(Collectors.toList());
     }
 
 
