@@ -1,39 +1,23 @@
 package com.example.checkin.classroom;
 
-import com.example.checkin.feature.Feature;
-
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Entity
-public class Classroom {
+public class ClassroomDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
     private Long id;
-
-    @Column(nullable = false)
     private String name;
-    @Column(nullable = false)
     private String location;
-    @Column(nullable = false)
     private Integer capacity;
+    private Set<Long> features = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "classroom_features",
-            joinColumns = @JoinColumn(name = "classroom_id"),
-            inverseJoinColumns = @JoinColumn(name = "feature_id"))
-    private Set<Feature> features = new HashSet<>();
-
-    public Classroom() {
+    public ClassroomDTO() {
     }
 
-    public Classroom(String name, String location, Integer capacity, Set<Feature> features) {
+    public ClassroomDTO(Long id, String name, String location, Integer capacity, Set<Long> features) {
+        this.id = id;
         this.name = name;
         this.location = location;
         this.capacity = capacity;
@@ -68,30 +52,26 @@ public class Classroom {
         return capacity;
     }
 
-    public void setCapacity(int capacity) {
+    public void setCapacity(Integer capacity) {
         this.capacity = capacity;
     }
 
-    public Set<Feature> getFeatures() {
+    public Set<Long> getFeatures() {
         return features;
     }
 
-    public void setFeatures(Set<Feature> features) {
-        this.features = features;
+    public void setFeatures(Set<Long> f_ids) {
+        this.features = f_ids;
     }
 
     @Override
     public String toString() {
-        return "Classroom{" +
+        return "ClassroomDTO{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", location='" + location + '\'' +
                 ", capacity=" + capacity +
-                ", classroomFeatures=" + features +
+                ", features=" + features +
                 '}';
-    }
-
-    public void assignFeature(Feature feature) {
-        features.add(feature);
     }
 }

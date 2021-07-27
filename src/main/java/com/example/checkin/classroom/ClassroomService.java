@@ -7,8 +7,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -41,14 +44,16 @@ public class ClassroomService {
         }
     }
 
-    public Classroom findClassroomById(Long id){
-        return classroomRepository.findClassroomById(id).orElseThrow(
+    public ClassroomDTO findClassroomById(Long id){
+        Classroom classroom = classroomRepository.findClassroomById(id).orElseThrow(
                 () -> new IllegalStateException("Classroom with id: " + id + " not found!")
         );
+        return mapEntityToDto(classroom);
     }
 
-    public List<Classroom> findAllClassrooms(){
-        return classroomRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
+    public List<ClassroomDTO> findAllClassrooms(){
+        List<Classroom> classrooms = classroomRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
+        return mapEntitiesToDTO(classrooms);
     }
 
     public void updateClassroom(Long id, Classroom updatedClassroom){
@@ -68,15 +73,43 @@ public class ClassroomService {
     }
 
     public void assignFeatureToClassroom(Long classroomId, Long featureId){
-        Optional<Classroom> classroomOptional = classroomRepository.findClassroomById(classroomId);
-        Optional<Feature> featureOptional =  featureRepository.findFeatureById(featureId);
-        if (classroomOptional.isPresent() && featureOptional.isPresent()){
-            Classroom classroom = classroomRepository.getById(classroomId);
-            Feature feature = featureRepository.getById(featureId);
-            feature.assignClassroom(classroom);
-        }
+        Classroom classroom = classroomRepository.findClassroomById(classroomId).orElseThrow(
+                () -> new IllegalStateException("Classroom with id: " + classroomId + " not found!")
+        );
+        Feature feature = featureRepository.findFeatureById(featureId).orElseThrow(
+                () -> new IllegalStateException("Classroom with id: " + featureId + " not found!")
+        );
+        classroom.assignFeature(feature);
+        classroomRepository.save(classroom);
     }
 
+    public Set<Feature> getClassroomFeatures(Long classroomId){
+        Classroom classroom = classroomRepository.findClassroomById(classroomId).orElseThrow(
+                () -> new IllegalStateException("Classroom with id: "+ classroomId + " not found!")
+        );
+        return classroom.getFeatures();
+    }
 
+    public ClassroomDTO mapEntityToDto(Classroom classroom){
+        ClassroomDTO classroomDto = new ClassroomDTO();
+        classroomDto.setId(classroom.getId());
+        classroomDto.setName(classroom.getName());
+        classroomDto.setLocation(classroom.getLocation());
+        classroomDto.setCapacity(classroom.getCapacity());
+        classroomDto.setFeatures(getFeatureIds(classroom.getFeatures()));
+        return classroomDto;
+    }
+
+    public List<ClassroomDTO> mapEntitiesToDTO(List<Classroom> classrooms){
+        return classrooms.stream().map(this::mapEntityToDto).collect(Collectors.toList());
+    }
+
+    public Set<Long> getFeatureIds(Set<Feature> features){
+        Set<Long> featureIds = new HashSet<>();
+        for (Feature feature: features){
+            featureIds.add(feature.getId());
+        }
+        return featureIds;
+    }
 
 }
