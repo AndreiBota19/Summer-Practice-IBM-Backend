@@ -1,7 +1,10 @@
 package com.example.checkin.classroom;
 
+import com.example.checkin.course.Course;
+import com.example.checkin.course.CourseRepository;
 import com.example.checkin.feature.Feature;
 import com.example.checkin.feature.FeatureRepository;
+import com.example.checkin.planner.Planner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -19,11 +22,13 @@ public class ClassroomService {
 
     private final ClassroomRepository classroomRepository;
     private final FeatureRepository featureRepository;
+    private final CourseRepository courseRepository;
 
     @Autowired
-    public ClassroomService(ClassroomRepository classroomRepository, FeatureRepository featureRepository) {
+    public ClassroomService(ClassroomRepository classroomRepository, FeatureRepository featureRepository, CourseRepository courseRepository) {
         this.classroomRepository = classroomRepository;
         this.featureRepository = featureRepository;
+        this.courseRepository = courseRepository;
     }
 
     public Classroom addClassroom(Classroom classroom){
@@ -112,4 +117,17 @@ public class ClassroomService {
         return featureIds;
     }
 
+    public void assignCourseToClassroom(String time, Long classroomId, Long courseId) {
+        Classroom classroom = classroomRepository.findClassroomById(classroomId).orElseThrow(
+                () -> new IllegalStateException("Classroom with id: "+ classroomId + " not found!")
+        );
+        Course course = courseRepository.findCourseById(courseId).orElseThrow(
+                () -> new IllegalStateException("Course with id: "+ courseId + " not found!")
+        );
+        Planner planner = new Planner(time, course, classroom);
+
+        classroom.addPlanner(planner);
+        classroomRepository.save(classroom);
+
+    }
 }

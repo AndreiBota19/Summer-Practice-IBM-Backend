@@ -29,6 +29,5 @@ public class UserData implements CommandLineRunner {
         List<User> userList = List.of(u1, u2, u3, u4);
 
         userRepository.saveAll(userList);
-
     }
 }
