@@ -20,18 +20,12 @@ public class UserController {
         this.userService = userService;
     }
 
-    /**
-     * @return all users
-     */
     @GetMapping(path = "/all")
     public ResponseEntity<List<UserDTO>> getAllUsers () {
         List<UserDTO> users = userService.findAllUsers();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    /**
-     * @return user with userId
-     */
     @GetMapping(path = "find/{userId}")
     public ResponseEntity<User> getUserById(@PathVariable("userId") Long userId){
         User user = userService.findUserById(userId);

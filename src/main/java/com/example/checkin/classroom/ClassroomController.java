@@ -59,4 +59,12 @@ public class ClassroomController {
         return new ResponseEntity<>(features, HttpStatus.OK);
     }
 
+    @PostMapping(path = "{classroomId}/course/{courseId}")
+    public void assignClassToClassroom(
+            @PathVariable("classroomId") Long classroomId,
+            @PathVariable("courseId") Long courseId,
+            @RequestBody String time){
+        classroomService.assignCourseToClassroom(time, classroomId, courseId);
+    }
+
 }
