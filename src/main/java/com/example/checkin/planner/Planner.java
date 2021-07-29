@@ -39,7 +39,7 @@ public class Planner {
     )
     private Set<User> enrolledUsers = new HashSet<>();
 
-    private Integer capacity;
+    private Integer remainingPlaces;
 
     public Planner() {
     }
@@ -48,7 +48,7 @@ public class Planner {
         this.time = time;
         this.course = course;
         this.classroom = classroom;
-        this.capacity = classroom.getCapacity();
+        this.remainingPlaces = classroom.getCapacity();
     }
 
     public Long getId() {
@@ -99,10 +99,12 @@ public class Planner {
         return enrolledUsers;
     }
 
-    public Integer getCapacity() { return capacity; }
+    public Integer getRemainingPlaces() {
+        return remainingPlaces;
+    }
 
-    public void setCapacity(Integer capacity) {
-        this.capacity = capacity;
+    public void setRemainingPlaces(Integer remainingPlaces) {
+        this.remainingPlaces = remainingPlaces;
     }
 
     public void setEnrolledUsers(Set<User> enrolledUsers) {
