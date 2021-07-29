@@ -2,9 +2,13 @@ package com.example.checkin.planner;
 
 import com.example.checkin.classroom.Classroom;
 import com.example.checkin.course.Course;
+import com.example.checkin.user.User;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 
@@ -27,6 +31,16 @@ public class Planner {
     @JsonBackReference(value = "reference2")
     private Classroom classroom;
 
+    @ManyToMany
+    @JoinTable(
+            name = "enrolled_users",
+            joinColumns = @JoinColumn(name = "planner_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private Set<User> enrolledUsers = new HashSet<>();
+
+    private Integer capacity;
+
     public Planner() {
     }
 
@@ -34,6 +48,7 @@ public class Planner {
         this.time = time;
         this.course = course;
         this.classroom = classroom;
+        this.capacity = classroom.getCapacity();
     }
 
     public Long getId() {
@@ -76,14 +91,25 @@ public class Planner {
 
     public void setClassroomId(Long id){ classroom.setId(id);}
 
-    @Override
-    public String toString() {
-        return "Planner{" +
-                "id=" + id +
-                ", time='" + time + '\'' +
-                ", course=" + course +
-                ", classroom=" + classroom +
-                '}';
+    public Integer getClassroomCapacity() {
+        return classroom.getCapacity();
     }
 
+    public Set<User> getEnrolledUsers() {
+        return enrolledUsers;
+    }
+
+    public Integer getCapacity() { return capacity; }
+
+    public void setCapacity(Integer capacity) {
+        this.capacity = capacity;
+    }
+
+    public void setEnrolledUsers(Set<User> enrolledUsers) {
+        this.enrolledUsers = enrolledUsers;
+    }
+
+    public void assignUser(User user) {
+        enrolledUsers.add(user);
+    }
 }

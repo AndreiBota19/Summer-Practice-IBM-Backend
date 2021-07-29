@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -20,21 +22,24 @@ public class CourseService {
             courseRepository.deleteCourseById(id);
         }
         else {
-            throw new IllegalStateException("class with id: " + id + " was not found!");
+            throw new IllegalStateException("Course with id: " + id + " was not found!");
         }
     }
-    public Course addCourse(Course cls)
-    {
-        return courseRepository.save(cls);
+    public Course addCourse(Course course) {
+        Optional<Course> courseOptional = courseRepository.findCourseByName(course.getName());
+        if (courseOptional.isPresent()){
+            throw new IllegalStateException("Course with name: " + course.getName() + " already exists");
+        }
+        return courseRepository.save(course);
     }
     public Course findCourseById(Long id)
     {
-        return courseRepository.findCourseById(id).orElseThrow(() -> new IllegalStateException("class with id: " + id +" was not found"));
+        return courseRepository.findCourseById(id).orElseThrow(() -> new IllegalStateException("Course with id: " + id +" was not found"));
     }
 
     public void updateCourse(Long id, Course updatedCourse){
         Course cls = courseRepository.findCourseById(id).orElseThrow(
-                () -> new IllegalStateException("class with id: " + id + " was not found!")
+                () -> new IllegalStateException("Course with id: " + id + " was not found!")
         );
         if (updatedCourse.getName().length() > 0 && !(updatedCourse.getName().equals(cls.getName()))){
             cls.setName(updatedCourse.getName());
@@ -48,7 +53,19 @@ public class CourseService {
 
     }
 
-    public List<Course> findAllCourses() {
-        return courseRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
+    public List<CourseDTO> findAllCourses() {
+        List<Course> courses = courseRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
+        return mapEntitiesToDTO(courses);
+    }
+
+    public CourseDTO mapEntityToDto(Course course){
+        CourseDTO courseDTO = new CourseDTO();
+        courseDTO.setId(course.getId());
+        courseDTO.setName(course.getName());
+        return courseDTO;
+    }
+
+    public List<CourseDTO> mapEntitiesToDTO(List<Course> courses){
+        return courses.stream().map(this::mapEntityToDto).collect(Collectors.toList());
     }
 }

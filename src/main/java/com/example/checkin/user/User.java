@@ -1,7 +1,12 @@
 package com.example.checkin.user;
 
+import com.example.checkin.planner.Planner;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -26,6 +31,10 @@ public class User implements Serializable {
     private String department;
     private String section;
     private Integer group;
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "enrolledUsers")
+    private Set<Planner> planners = new HashSet<>();
 
     public User() {
     }
@@ -102,6 +111,10 @@ public class User implements Serializable {
 
     public void setGroup(int group) {
         this.group = group;
+    }
+
+    public Set<Planner> getPlanners() {
+        return planners;
     }
 
     @Override
