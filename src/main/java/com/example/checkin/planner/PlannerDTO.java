@@ -14,18 +14,18 @@ public class PlannerDTO {
     private Long courseId;
     private Long classroomId;
     private Set<Long> enrolledUsers = new HashSet<>();
-    private Integer capacity;
+    private Integer remainingPlaces;
 
     public PlannerDTO() {
     }
 
-    public PlannerDTO(Long id, String time, Long courseId, Long classroomId, Set<Long> enrolledUsers, Integer capacity) {
+    public PlannerDTO(Long id, String time, Long courseId, Long classroomId, Set<Long> enrolledUsers, Integer remainingPlaces) {
         this.id = id;
         this.time = time;
         this.courseId = courseId;
         this.classroomId = classroomId;
         this.enrolledUsers = enrolledUsers;
-        this.capacity = capacity;
+        this.remainingPlaces = remainingPlaces;
     }
 
     public Long getId() {
@@ -68,12 +68,12 @@ public class PlannerDTO {
         this.enrolledUsers = enrolledUsers;
     }
 
-    public Integer getCapacity() {
-        return capacity;
+    public Integer getRemainingPlaces() {
+        return remainingPlaces;
     }
 
-    public void setCapacity(Integer capacity) {
-        this.capacity = capacity;
+    public void setRemainingPlaces(Integer remainingPlaces) {
+        this.remainingPlaces = remainingPlaces;
     }
 
     @Override
@@ -84,7 +84,7 @@ public class PlannerDTO {
                 ", courseId=" + courseId +
                 ", classroomId=" + classroomId +
                 ", enrolledUsers=" + enrolledUsers +
-                ", capacity=" + capacity +
+                ", remainingPlaces=" + remainingPlaces +
                 '}';
     }
 }

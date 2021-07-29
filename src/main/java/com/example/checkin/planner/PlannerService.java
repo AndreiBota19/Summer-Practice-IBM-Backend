@@ -38,10 +38,12 @@ public class PlannerService {
                 () -> new IllegalStateException("User with id: " + userId + " not found!")
         );
         if ((user.getRole().equals(UserRole.STUDENT) || user.getRole().equals(UserRole.TEACHER) &&
-                planner.getCapacity()>0)){
-            planner.assignUser(user);
-            planner.setCapacity(planner.getCapacity()-1);
-            plannerRepository.save(planner);
+                planner.getRemainingPlaces()>0)){
+            if (!(planner.getEnrolledUsers().contains(user))){
+                planner.assignUser(user);
+                planner.setRemainingPlaces(planner.getRemainingPlaces()-1);
+                plannerRepository.save(planner);
+            }
         }
         else throw new IllegalStateException("Only students and teachers are allowed to enroll");
     }
@@ -53,7 +55,7 @@ public class PlannerService {
         plannerDto.setCourseId(planner.getCourse().getId());
         plannerDto.setClassroomId(planner.getClassroom().getId());
         plannerDto.setEnrolledUsers(getUserIds(planner.getEnrolledUsers()));
-        plannerDto.setCapacity(planner.getCapacity());
+        plannerDto.setRemainingPlaces(planner.getRemainingPlaces());
         return plannerDto;
     }
 
