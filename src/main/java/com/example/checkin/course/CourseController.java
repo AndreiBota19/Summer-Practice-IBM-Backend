@@ -22,8 +22,8 @@ public class CourseController {
     }
 
     @GetMapping(path = "/all")
-    public ResponseEntity<List<Course>> getAllCourses(){
-        List<Course> courses = courseService.findAllCourses();
+    public ResponseEntity<List<CourseDTO>> getAllCourses(){
+        List<CourseDTO> courses = courseService.findAllCourses();
         return new ResponseEntity<>(courses, HttpStatus.OK);
     }
 
@@ -34,7 +34,7 @@ public class CourseController {
     }
 
     @DeleteMapping("/delete/{courseId}")
-    public ResponseEntity<?> deleteClass(@PathVariable("courseId") Long courseId)
+    public ResponseEntity<?> deleteCourse(@PathVariable("courseId") Long courseId)
     {
         courseService.deleteCourse(courseId);
         return new ResponseEntity<>(HttpStatus.OK);
