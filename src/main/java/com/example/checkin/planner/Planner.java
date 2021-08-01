@@ -31,13 +31,13 @@ public class Planner {
     @JsonBackReference(value = "reference2")
     private Classroom classroom;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "enrolled_users",
+            name = "enrolled_students",
             joinColumns = @JoinColumn(name = "planner_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private Set<User> enrolledUsers = new HashSet<>();
+    private Set<User> enrolledStudents = new HashSet<>();
 
     private Integer remainingPlaces;
 
@@ -89,14 +89,12 @@ public class Planner {
 
     public Long getClassroomId(){ return classroom.getId();}
 
-    public void setClassroomId(Long id){ classroom.setId(id);}
-
-    public Integer getClassroomCapacity() {
-        return classroom.getCapacity();
-    }
-
-    public Set<User> getEnrolledUsers() {
-        return enrolledUsers;
+    public Set<Long> getEnrolledStudents() {
+        Set<Long> students = new HashSet<>();
+        for (User student: enrolledStudents){
+            students.add(student.getId());
+        }
+        return students;
     }
 
     public Integer getRemainingPlaces() {
@@ -107,11 +105,11 @@ public class Planner {
         this.remainingPlaces = remainingPlaces;
     }
 
-    public void setEnrolledUsers(Set<User> enrolledUsers) {
-        this.enrolledUsers = enrolledUsers;
+    public void setEnrolledStudents(Set<User> enrolledStudents) {
+        this.enrolledStudents = enrolledStudents;
     }
 
-    public void assignUser(User user) {
-        enrolledUsers.add(user);
+    public void assignStudent(User student) {
+        enrolledStudents.add(student);
     }
 }

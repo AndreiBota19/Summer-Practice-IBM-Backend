@@ -19,14 +19,14 @@ public class PlannerController {
     }
 
     @GetMapping(path = "/all")
-    public ResponseEntity<List<PlannerDTO>> getAllPlanners(){
-        List<PlannerDTO> planners = plannerService.findAllPlanners();
+    public ResponseEntity<List<Planner>> getAllPlanners(){
+        List<Planner> planners = plannerService.findAllPlanners();
         return new ResponseEntity<>(planners, HttpStatus.OK);
     }
 
-    @PutMapping(path = "{plannerId}/user/{userId}")
-    public void assignUserToPlanner(@PathVariable Long plannerId, @PathVariable Long userId){
-        plannerService.assignUserToPlanner(plannerId, userId);
+    @PutMapping(path = "{plannerId}/student/{studentId}")
+    public void assignUserToPlanner(@PathVariable Long plannerId, @PathVariable Long studentId){
+        plannerService.assignStudentToPlanner(plannerId, studentId);
     }
 
 }

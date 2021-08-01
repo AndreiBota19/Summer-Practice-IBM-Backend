@@ -1,5 +1,8 @@
 package com.example.checkin.course;
 
+import com.example.checkin.user.User;
+import com.example.checkin.user.UserRepository;
+import com.example.checkin.user.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -12,10 +15,14 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class CourseService {
-    CourseRepository courseRepository;
+
+    private final CourseRepository courseRepository;
+    private final UserRepository userRepository;
+
     @Autowired
-    public CourseService(CourseRepository courseRepository) {
+    public CourseService(CourseRepository courseRepository, UserRepository userRepository) {
         this.courseRepository = courseRepository;
+        this.userRepository = userRepository;
     }
     public void deleteCourse(Long id) {
         if (courseRepository.existsById(id)){
@@ -44,13 +51,9 @@ public class CourseService {
         if (updatedCourse.getName().length() > 0 && !(updatedCourse.getName().equals(cls.getName()))){
             cls.setName(updatedCourse.getName());
         }
-        if (updatedCourse.getTeacher().length() > 0 && !(updatedCourse.getTeacher().equals(cls.getTeacher()))){
-            cls.setTeacher(updatedCourse.getTeacher());
-        }
         if (updatedCourse.getYear() > 0 && updatedCourse.getYear() != cls.getYear()){
             cls.setYear(updatedCourse.getYear());
         }
-
     }
 
     public List<CourseDTO> findAllCourses() {
@@ -67,5 +70,21 @@ public class CourseService {
 
     public List<CourseDTO> mapEntitiesToDTO(List<Course> courses){
         return courses.stream().map(this::mapEntityToDto).collect(Collectors.toList());
+    }
+
+    public void assignTeacherToCourse(Long courseId, Long teacherId) {
+        Course course = courseRepository.findCourseById(courseId).orElseThrow(
+                () -> new IllegalStateException("Course with id: "+ courseId + " not found!")
+        );
+        User teacher = userRepository.findUserById(teacherId).orElseThrow(
+                () -> new IllegalStateException("Teacher with id: "+ teacherId + " not found!")
+        );
+        if (teacher.getRole().equals(UserRole.TEACHER)) {
+            course.setTeacher(teacher);
+        }
+        else {
+            throw new IllegalStateException("User with id: " + teacherId + " is not a teacher");
+        }
+        courseRepository.save(course);
     }
 }

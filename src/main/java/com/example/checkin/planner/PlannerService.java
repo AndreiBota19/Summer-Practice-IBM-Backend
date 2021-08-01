@@ -1,7 +1,5 @@
 package com.example.checkin.planner;
 
-import com.example.checkin.classroom.Classroom;
-import com.example.checkin.classroom.ClassroomDTO;
 import com.example.checkin.user.User;
 import com.example.checkin.user.UserRepository;
 import com.example.checkin.user.UserRole;
@@ -9,9 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,27 +21,26 @@ public class PlannerService {
         this.userRepository = userRepository;
     }
 
-    public List<PlannerDTO> findAllPlanners(){
-        List<Planner> planners = plannerRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
-        return mapEntitiesToDTO(planners);
+    public List<Planner> findAllPlanners(){
+        return plannerRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
     }
 
-    public void assignUserToPlanner(Long plannerId, Long userId) {
+    public void assignStudentToPlanner(Long plannerId, Long userId) {
         Planner planner = plannerRepository.findPlannerById(plannerId).orElseThrow(
                 () -> new IllegalStateException("Planner with id: " + plannerId + " not found!")
         );
         User user = userRepository.findUserById(userId).orElseThrow(
                 () -> new IllegalStateException("User with id: " + userId + " not found!")
         );
-        if ((user.getRole().equals(UserRole.STUDENT) || user.getRole().equals(UserRole.TEACHER) &&
+        if ((user.getRole().equals(UserRole.STUDENT) &&
                 planner.getRemainingPlaces()>0)){
-            if (!(planner.getEnrolledUsers().contains(user))){
-                planner.assignUser(user);
+            if (!(planner.getEnrolledStudents().contains(user.getId()))){
+                planner.assignStudent(user);
                 planner.setRemainingPlaces(planner.getRemainingPlaces()-1);
                 plannerRepository.save(planner);
             }
         }
-        else throw new IllegalStateException("Only students and teachers are allowed to enroll");
+        else throw new IllegalStateException("Only students are allowed to enroll");
     }
 
     public PlannerDTO mapEntityToDto(Planner planner){
@@ -54,7 +49,6 @@ public class PlannerService {
         plannerDto.setTime(planner.getTime());
         plannerDto.setCourseId(planner.getCourse().getId());
         plannerDto.setClassroomId(planner.getClassroom().getId());
-        plannerDto.setEnrolledUsers(getUserIds(planner.getEnrolledUsers()));
         plannerDto.setRemainingPlaces(planner.getRemainingPlaces());
         return plannerDto;
     }
@@ -63,11 +57,4 @@ public class PlannerService {
         return planners.stream().map(this::mapEntityToDto).collect(Collectors.toList());
     }
 
-    private Set<Long> getUserIds(Set<User> enrolledUsers) {
-        Set<Long> userIds = new HashSet<>();
-        for (User user: enrolledUsers){
-            userIds.add(user.getId());
-        }
-        return userIds;
-    }
 }

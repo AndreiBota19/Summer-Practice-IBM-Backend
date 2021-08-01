@@ -13,18 +13,16 @@ public class PlannerDTO {
     private String time;
     private Long courseId;
     private Long classroomId;
-    private Set<Long> enrolledUsers = new HashSet<>();
     private Integer remainingPlaces;
 
     public PlannerDTO() {
     }
 
-    public PlannerDTO(Long id, String time, Long courseId, Long classroomId, Set<Long> enrolledUsers, Integer remainingPlaces) {
+    public PlannerDTO(Long id, String time, Long courseId, Long classroomId, Integer remainingPlaces) {
         this.id = id;
         this.time = time;
         this.courseId = courseId;
         this.classroomId = classroomId;
-        this.enrolledUsers = enrolledUsers;
         this.remainingPlaces = remainingPlaces;
     }
 
@@ -60,14 +58,6 @@ public class PlannerDTO {
         this.classroomId = classroomId;
     }
 
-    public Set<Long> getEnrolledUsers() {
-        return enrolledUsers;
-    }
-
-    public void setEnrolledUsers(Set<Long> enrolledUsers) {
-        this.enrolledUsers = enrolledUsers;
-    }
-
     public Integer getRemainingPlaces() {
         return remainingPlaces;
     }
@@ -83,7 +73,6 @@ public class PlannerDTO {
                 ", time='" + time + '\'' +
                 ", courseId=" + courseId +
                 ", classroomId=" + classroomId +
-                ", enrolledUsers=" + enrolledUsers +
                 ", remainingPlaces=" + remainingPlaces +
                 '}';
     }
