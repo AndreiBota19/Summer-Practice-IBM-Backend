@@ -1,5 +1,6 @@
 package com.example.checkin.user;
 
+import com.example.checkin.course.Course;
 import com.example.checkin.planner.Planner;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -33,8 +34,12 @@ public class User implements Serializable {
     private Integer group;
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "enrolledUsers")
+    @ManyToMany(mappedBy = "enrolledStudents")
     private Set<Planner> planners = new HashSet<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "teacher")
+    private Set<Course> courses = new HashSet<>();
 
     public User() {
     }
@@ -115,6 +120,10 @@ public class User implements Serializable {
 
     public Set<Planner> getPlanners() {
         return planners;
+    }
+
+    public Set<Course> getCourses() {
+        return courses;
     }
 
     @Override

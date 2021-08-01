@@ -15,10 +15,10 @@ public class CourseController {
         this.courseService = courseService;
     }
 
-    @PostMapping(path = "/add")
+    @PostMapping()
     public ResponseEntity<Course> registerCourse(@RequestBody Course course){
-        Course course1= courseService.addCourse(course);
-        return new ResponseEntity<>(course1 , HttpStatus.CREATED);
+        courseService.addCourse(course);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @GetMapping(path = "/all")
@@ -33,15 +33,20 @@ public class CourseController {
         return new ResponseEntity<>(course, HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete/{courseId}")
+    @DeleteMapping("/{courseId}")
     public ResponseEntity<?> deleteCourse(@PathVariable("courseId") Long courseId)
     {
         courseService.deleteCourse(courseId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    @PutMapping(path = "/edit/{courseId}")
+    @PutMapping(path = "/{courseId}")
     public void editCourse(@PathVariable("courseId") Long courseId, @RequestBody Course course){
         courseService.updateCourse(courseId, course);
+    }
+
+    @PutMapping(path = "/{courseId}/teacher/{teacherId}")
+    public void assignTeacherToCourse(@PathVariable Long courseId, @PathVariable Long teacherId){
+        courseService.assignTeacherToCourse(courseId, teacherId);
     }
 
 }

@@ -10,7 +10,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -31,13 +30,13 @@ public class ClassroomService {
         this.courseRepository = courseRepository;
     }
 
-    public Classroom addClassroom(Classroom classroom){
+    public void addClassroom(Classroom classroom){
         Optional<Classroom> classroomOptional = classroomRepository.findClassroomByName(classroom.getName());
         if (classroomOptional.isPresent()){
             throw new IllegalStateException("Classroom with name: " + classroom.getName() + " already exists");
         }
 
-        return  classroomRepository.save(classroom);
+        classroomRepository.save(classroom);
     }
 
     public void deleteClassroom(Long id){
@@ -60,6 +59,7 @@ public class ClassroomService {
         List<Classroom> classrooms = classroomRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
         return mapEntitiesToDTO(classrooms);
     }
+
 
     public void updateClassroom(Long id, Classroom updatedClassroom){
         Classroom classroom = classroomRepository.findClassroomById(id).orElseThrow(
@@ -88,7 +88,7 @@ public class ClassroomService {
         classroomRepository.save(classroom);
     }
 
-    public Set<Feature> getClassroomFeatures(Long classroomId){
+    public Set<Long> getClassroomFeatures(Long classroomId){
         Classroom classroom = classroomRepository.findClassroomById(classroomId).orElseThrow(
                 () -> new IllegalStateException("Classroom with id: "+ classroomId + " not found!")
         );
@@ -99,22 +99,11 @@ public class ClassroomService {
         ClassroomDTO classroomDto = new ClassroomDTO();
         classroomDto.setId(classroom.getId());
         classroomDto.setName(classroom.getName());
-        classroomDto.setLocation(classroom.getLocation());
-        classroomDto.setCapacity(classroom.getCapacity());
-        classroomDto.setFeatures(getFeatureIds(classroom.getFeatures()));
         return classroomDto;
     }
 
     public List<ClassroomDTO> mapEntitiesToDTO(List<Classroom> classrooms){
         return classrooms.stream().map(this::mapEntityToDto).collect(Collectors.toList());
-    }
-
-    public Set<Long> getFeatureIds(Set<Feature> features){
-        Set<Long> featureIds = new HashSet<>();
-        for (Feature feature: features){
-            featureIds.add(feature.getId());
-        }
-        return featureIds;
     }
 
     public void assignCourseToClassroom(String time, Long classroomId, Long courseId) {

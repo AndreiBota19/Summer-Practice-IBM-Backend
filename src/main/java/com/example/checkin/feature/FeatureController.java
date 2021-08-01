@@ -18,10 +18,10 @@ public class FeatureController {
         this.featureService = featureService;
     }
 
-    @PostMapping(path = "/add")
+    @PostMapping()
     public ResponseEntity<Feature> registerFeature(@RequestBody Feature feature){
-        Feature f = featureService.addFeature(feature);
-        return new ResponseEntity<>(f, HttpStatus.CREATED);
+        featureService.addFeature(feature);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @GetMapping(path = "/{featureId}")
@@ -36,7 +36,7 @@ public class FeatureController {
         return new ResponseEntity<>(featureList, HttpStatus.OK);
     }
 
-    @DeleteMapping(path = "/delete/{featureId}")
+    @DeleteMapping(path = "/{featureId}")
     public void deleteFeature(@PathVariable("featureId") Long featureId){
         featureService.deleteFeature(featureId);
     }

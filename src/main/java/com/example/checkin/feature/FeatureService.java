@@ -19,12 +19,12 @@ public class FeatureService {
         this.featureRepository = featureRepository;
     }
 
-    public Feature addFeature(Feature feature){
+    public void addFeature(Feature feature){
         Optional<Feature> featureOptional = featureRepository.findFeatureByName(feature.getName());
         if (featureOptional.isPresent()){
             throw new IllegalStateException("Feature with name: " + feature.getName() + " already exists");
         }
-        return  featureRepository.save(feature);
+        featureRepository.save(feature);
     }
 
     public Feature findFeatureById(Long id){

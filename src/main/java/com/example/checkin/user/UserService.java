@@ -1,10 +1,12 @@
 package com.example.checkin.user;
 
+import com.example.checkin.feature.Feature;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -17,8 +19,11 @@ public class UserService {
         this.userRepository = userRepo;
     }
 
-    public List<UserDTO> findAllUsers(){
+    public void addUser(User user) {
+        userRepository.save(user);
+    }
 
+    public List<UserDTO> findAllUsers(){
         List<User> users = userRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
         return mapEntitiesToDTO(users);
     }
@@ -55,6 +60,5 @@ public class UserService {
     public List<UserDTO> mapEntitiesToDTO(List<User> users){
         return users.stream().map(this::mapEntityToDto).collect(Collectors.toList());
     }
-
 
 }

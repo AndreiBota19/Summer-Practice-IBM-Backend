@@ -1,6 +1,7 @@
 package com.example.checkin.course;
 
 import com.example.checkin.planner.Planner;
+import com.example.checkin.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
@@ -18,8 +19,9 @@ public class Course {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private String teacher;
+    @ManyToOne
+    @JoinColumn(name = "teacher_id", referencedColumnName = "id")
+    private User teacher;
 
     @Column(nullable = false)
     private int year;
@@ -33,9 +35,8 @@ public class Course {
     public Course() {
     }
 
-    public Course(String name, String teacher, int year, String section) {
+    public Course(String name, int year, String section) {
         this.name = name;
-        this.teacher = teacher;
         this.year = year;
         this.section = section;
     }
@@ -56,11 +57,14 @@ public class Course {
         this.name = name;
     }
 
-    public String getTeacher() {
-        return teacher;
+    public Long getTeacher() {
+        if (teacher != null) {
+            return teacher.getId();
+        }
+        return null;
     }
 
-    public void setTeacher(String teacher) {
+    public void setTeacher(User teacher) {
         this.teacher = teacher;
     }
 
@@ -99,4 +103,5 @@ public class Course {
                 ", planners=" + planners +
                 '}';
     }
+
 }
