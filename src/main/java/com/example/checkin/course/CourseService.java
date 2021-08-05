@@ -5,10 +5,15 @@ import com.example.checkin.user.UserRepository;
 import com.example.checkin.user.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ReflectionUtils;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -29,24 +34,26 @@ public class CourseService {
             courseRepository.deleteCourseById(id);
         }
         else {
-            throw new IllegalStateException("Course with id: " + id + " was not found!");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Course with id: " + id + " was not found!");
         }
     }
-    public Course addCourse(Course course) {
+
+    public void addCourse(Course course) {
         Optional<Course> courseOptional = courseRepository.findCourseByName(course.getName());
         if (courseOptional.isPresent()){
             throw new IllegalStateException("Course with name: " + course.getName() + " already exists");
         }
-        return courseRepository.save(course);
+        courseRepository.save(course);
     }
     public Course findCourseById(Long id)
     {
-        return courseRepository.findCourseById(id).orElseThrow(() -> new IllegalStateException("Course with id: " + id +" was not found"));
+        return courseRepository.findCourseById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course with id: " + id +" was not found"));
     }
 
     public void updateCourse(Long id, Course updatedCourse){
         Course cls = courseRepository.findCourseById(id).orElseThrow(
-                () -> new IllegalStateException("Course with id: " + id + " was not found!")
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course with id: " + id + " was not found!")
         );
         if (updatedCourse.getName().length() > 0 && !(updatedCourse.getName().equals(cls.getName()))){
             cls.setName(updatedCourse.getName());
@@ -74,17 +81,31 @@ public class CourseService {
 
     public void assignTeacherToCourse(Long courseId, Long teacherId) {
         Course course = courseRepository.findCourseById(courseId).orElseThrow(
-                () -> new IllegalStateException("Course with id: "+ courseId + " not found!")
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course with id: "+ courseId + " not found!")
         );
         User teacher = userRepository.findUserById(teacherId).orElseThrow(
-                () -> new IllegalStateException("Teacher with id: "+ teacherId + " not found!")
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Teacher with id: "+ teacherId + " not found!")
         );
         if (teacher.getRole().equals(UserRole.TEACHER)) {
             course.setTeacher(teacher);
         }
         else {
-            throw new IllegalStateException("User with id: " + teacherId + " is not a teacher");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id: " + teacherId + " is not a teacher");
         }
+        courseRepository.save(course);
+    }
+
+    public void partialUpdateCourse(Long courseId, Map<String, Object> request) {
+        Course course = courseRepository.findCourseById(courseId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course with id: " + courseId + " not found!")
+        );
+        request.forEach((k,v) -> {
+            Field field = ReflectionUtils.findField(Course.class, k);
+            if (field != null){
+                field.setAccessible(true);
+                ReflectionUtils.setField(field, course, v);
+            }
+        });
         courseRepository.save(course);
     }
 }

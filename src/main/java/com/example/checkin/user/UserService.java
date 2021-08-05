@@ -2,8 +2,10 @@ package com.example.checkin.user;
 
 import com.example.checkin.feature.Feature;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +31,7 @@ public class UserService {
     }
 
     public User findUserById(Long id){
-        return userRepository.findUserById(id).orElseThrow(() -> new IllegalStateException("user with id: " + id +" was not found"));
+        return userRepository.findUserById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id: " + id +" was not found"));
     }
 
     public List<User> findAllGuests(){

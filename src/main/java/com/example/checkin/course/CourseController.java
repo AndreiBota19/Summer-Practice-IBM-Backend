@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/course")
@@ -47,6 +48,13 @@ public class CourseController {
     @PutMapping(path = "/{courseId}/teacher/{teacherId}")
     public void assignTeacherToCourse(@PathVariable Long courseId, @PathVariable Long teacherId){
         courseService.assignTeacherToCourse(courseId, teacherId);
+    }
+
+    @PatchMapping(path = "/{courseId}")
+    public void partialUpdateCourse(
+            @PathVariable("courseId") Long courseId,
+            @RequestBody Map<String, Object> request){
+        courseService.partialUpdateCourse(courseId, request);
     }
 
 }

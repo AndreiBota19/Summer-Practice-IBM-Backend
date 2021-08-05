@@ -21,12 +21,12 @@ public class Planner {
     @Column(nullable = false)
     private String time;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "course_id")
     @JsonBackReference(value = "reference1")
     private Course course;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "classroom_id")
     @JsonBackReference(value = "reference2")
     private Classroom classroom;
