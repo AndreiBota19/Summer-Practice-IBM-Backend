@@ -1,16 +1,18 @@
 package com.example.checkin.classroom;
 
-import com.example.checkin.course.Course;
-import com.example.checkin.course.CourseRepository;
 import com.example.checkin.feature.Feature;
 import com.example.checkin.feature.FeatureRepository;
-import com.example.checkin.planner.Planner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ReflectionUtils;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -21,13 +23,11 @@ public class ClassroomService {
 
     private final ClassroomRepository classroomRepository;
     private final FeatureRepository featureRepository;
-    private final CourseRepository courseRepository;
 
     @Autowired
-    public ClassroomService(ClassroomRepository classroomRepository, FeatureRepository featureRepository, CourseRepository courseRepository) {
+    public ClassroomService(ClassroomRepository classroomRepository, FeatureRepository featureRepository) {
         this.classroomRepository = classroomRepository;
         this.featureRepository = featureRepository;
-        this.courseRepository = courseRepository;
     }
 
     public void addClassroom(Classroom classroom){
@@ -35,24 +35,21 @@ public class ClassroomService {
         if (classroomOptional.isPresent()){
             throw new IllegalStateException("Classroom with name: " + classroom.getName() + " already exists");
         }
-
         classroomRepository.save(classroom);
     }
 
     public void deleteClassroom(Long id){
         if (classroomRepository.existsById(id)){
             classroomRepository.deleteClassroomById(id);
-        }
-        else {
-            throw new IllegalStateException("Classroom with id: " + id + " not found!");
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Classroom with id: " + id + " not found!");
         }
     }
 
-    public ClassroomDTO findClassroomById(Long id){
-        Classroom classroom = classroomRepository.findClassroomById(id).orElseThrow(
-                () -> new IllegalStateException("Classroom with id: " + id + " not found!")
+    public Classroom findClassroomById(Long id){
+        return  classroomRepository.findClassroomById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Classroom with id: " + id + " not found!")
         );
-        return mapEntityToDto(classroom);
     }
 
     public List<ClassroomDTO> findAllClassrooms(){
@@ -63,7 +60,7 @@ public class ClassroomService {
 
     public void updateClassroom(Long id, Classroom updatedClassroom){
         Classroom classroom = classroomRepository.findClassroomById(id).orElseThrow(
-                () -> new IllegalStateException("Classroom with id: " + id + " not found!")
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Classroom with id: " + id + " not found!")
         );
         if (updatedClassroom.getName().length() > 0 && !(updatedClassroom.getName().equals(classroom.getName()))){
             classroom.setName(updatedClassroom.getName());
@@ -77,20 +74,9 @@ public class ClassroomService {
 
     }
 
-    public void assignFeatureToClassroom(Long classroomId, Long featureId){
-        Classroom classroom = classroomRepository.findClassroomById(classroomId).orElseThrow(
-                () -> new IllegalStateException("Classroom with id: " + classroomId + " not found!")
-        );
-        Feature feature = featureRepository.findFeatureById(featureId).orElseThrow(
-                () -> new IllegalStateException("Classroom with id: " + featureId + " not found!")
-        );
-        classroom.assignFeature(feature);
-        classroomRepository.save(classroom);
-    }
-
     public Set<Long> getClassroomFeatures(Long classroomId){
         Classroom classroom = classroomRepository.findClassroomById(classroomId).orElseThrow(
-                () -> new IllegalStateException("Classroom with id: "+ classroomId + " not found!")
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Classroom with id: "+ classroomId + " not found!")
         );
         return classroom.getFeatures();
     }
@@ -106,17 +92,29 @@ public class ClassroomService {
         return classrooms.stream().map(this::mapEntityToDto).collect(Collectors.toList());
     }
 
-    public void assignCourseToClassroom(String time, Long classroomId, Long courseId) {
+    public void assignFeatureToClassroom(Long classroomId, Long featureId){
         Classroom classroom = classroomRepository.findClassroomById(classroomId).orElseThrow(
-                () -> new IllegalStateException("Classroom with id: "+ classroomId + " not found!")
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Classroom with id: " + classroomId + " not found!")
         );
-        Course course = courseRepository.findCourseById(courseId).orElseThrow(
-                () -> new IllegalStateException("Course with id: "+ courseId + " not found!")
+        Feature feature = featureRepository.findFeatureById(featureId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Feature with id: " + featureId + " not found!")
         );
-        Planner planner = new Planner(time, course, classroom);
 
-        classroom.addPlanner(planner);
+        classroom.assignFeature(feature);
         classroomRepository.save(classroom);
+    }
 
+    public void partialUpdateClassroom(Long classroomId, Map<String, Object> request) {
+        Classroom classroom = classroomRepository.findClassroomById(classroomId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Classroom with id: " + classroomId + " not found!")
+        );
+        request.forEach((k,v) -> {
+            Field field = ReflectionUtils.findField(Classroom.class, k);
+            if (field != null){
+                field.setAccessible(true);
+                ReflectionUtils.setField(field, classroom, v);
+            }
+        });
+        classroomRepository.save(classroom);
     }
 }

@@ -27,9 +27,8 @@ public class Feature {
     public Feature() {
     }
 
-    public Feature(String name, Set<Classroom> classroomList) {
+    public Feature(String name) {
         this.name = name;
-        this.classroomList = classroomList;
     }
 
     public Long getId() {
@@ -65,7 +64,4 @@ public class Feature {
                 '}';
     }
 
-    public void assignToClassroom(Classroom classroom) {
-
-    }
 }

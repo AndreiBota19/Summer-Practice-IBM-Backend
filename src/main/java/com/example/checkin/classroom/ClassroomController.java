@@ -1,11 +1,14 @@
 package com.example.checkin.classroom;
 
+import com.example.checkin.feature.Feature;
+import com.example.checkin.feature.FeatureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -32,38 +35,41 @@ public class ClassroomController {
     }
 
     @GetMapping(path = "/{classroomId}")
-    public ResponseEntity<ClassroomDTO> getClassroomById(@PathVariable("classroomId") Long classroomId){
-        ClassroomDTO classroom = classroomService.findClassroomById(classroomId);
+    public ResponseEntity<Classroom> getClassroomById(@PathVariable("classroomId") Long classroomId){
+        Classroom classroom = classroomService.findClassroomById(classroomId);
         return new ResponseEntity<>(classroom, HttpStatus.OK);
     }
 
-    @PutMapping(path = "{classroomId}")
-    public void editClassroom(@PathVariable("classroomId") Long classroomId, @RequestBody Classroom classroom){
+    @PutMapping(path = "/{classroomId}")
+    public void editClassroom(
+            @PathVariable("classroomId") Long classroomId,
+            @RequestBody Classroom classroom){
         classroomService.updateClassroom(classroomId, classroom);
     }
 
-    @DeleteMapping(path = "{classroomId}")
+    @DeleteMapping(path = "/{classroomId}")
     public void deleteClassroom(@PathVariable("classroomId") Long classroomId){
         classroomService.deleteClassroom(classroomId);
     }
 
-    @PutMapping(path = "{classroomId}/feature/{featureId}")
-    public void assignFeatureToClassroom(@PathVariable Long classroomId, @PathVariable Long featureId){
+    @PutMapping(path = "/{classroomId}/feature/{featureId}")
+    public void assignFeatureToClassroom(
+            @PathVariable Long classroomId,
+            @PathVariable Long featureId){
         classroomService.assignFeatureToClassroom(classroomId, featureId);
     }
 
-    @GetMapping(path = "{classroomId}/features")
+    @GetMapping(path = "/{classroomId}/features")
     public ResponseEntity<Set<Long>> getFeatures(@PathVariable Long classroomId){
         Set<Long> features = classroomService.getClassroomFeatures(classroomId);
         return new ResponseEntity<>(features, HttpStatus.OK);
     }
 
-    @PostMapping(path = "{classroomId}/course/{courseId}")
-    public void assignClassToClassroom(
+    @PatchMapping(path = "/{classroomId}")
+    public void partialUpdateClassroom(
             @PathVariable("classroomId") Long classroomId,
-            @PathVariable("courseId") Long courseId,
-            @RequestBody String time){
-        classroomService.assignCourseToClassroom(time, classroomId, courseId);
+            @RequestBody Map<String, Object> request){
+        classroomService.partialUpdateClassroom(classroomId, request);
     }
 
 }
