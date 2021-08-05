@@ -1,6 +1,7 @@
 package com.example.checkin.user;
 
 import com.example.checkin.feature.Feature;
+import com.example.checkin.planner.Planner;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,7 +33,9 @@ public class UserService {
     }
 
     public User findUserById(Long id){
-        return userRepository.findUserById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id: " + id +" was not found"));
+        return userRepository.findUserById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id: " + id +" was not found")
+        );
     }
 
     public List<User> findAllGuests(){
@@ -63,4 +67,15 @@ public class UserService {
         return users.stream().map(this::mapEntityToDto).collect(Collectors.toList());
     }
 
+    public Set<Planner> getStudentPlanners(Long userId) {
+        User user = userRepository.findUserById(userId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id: " + userId +" was not found")
+        );
+        if (user.getRole().equals(UserRole.STUDENT)){
+            return user.getPlanners();
+        }
+        else {
+            throw new IllegalStateException("Only students have planners");
+        }
+    }
 }

@@ -26,6 +26,12 @@ public class PlannerController {
         plannerService.addPlanner(time, classroomId, courseId);
     }
 
+    @GetMapping(path = "/{plannerId}")
+    public ResponseEntity<Planner> getPlannerById(@PathVariable("plannerId") Long plannerId){
+        Planner planner = plannerService.findPlannerById(plannerId);
+        return new ResponseEntity<Planner>(planner, HttpStatus.OK);
+    }
+
     @GetMapping(path = "/all")
     public ResponseEntity<List<Planner>> getAllPlanners(){
         List<Planner> planners = plannerService.findAllPlanners();
