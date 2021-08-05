@@ -18,10 +18,6 @@ public class User implements Serializable {
     @Column(nullable = false)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private UserRole role;
-
     @Column(nullable = false)
     private String firstName;
 
@@ -31,7 +27,10 @@ public class User implements Serializable {
     private Integer year;
     private String department;
     private String section;
-    private Integer group;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserRole role;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "enrolledStudents")
@@ -44,14 +43,13 @@ public class User implements Serializable {
     public User() {
     }
 
-    public User(UserRole role, String firstName, String lastName, Integer year, String department, String section, Integer group) {
-        this.role = role;
+    public User(String firstName, String lastName, Integer year, String department, String section, UserRole role) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.year = year;
         this.department = department;
         this.section = section;
-        this.group = group;
+        this.role = role;
     }
 
     public Long getId() {
@@ -110,14 +108,6 @@ public class User implements Serializable {
         this.section = section;
     }
 
-    public Integer getGroup() {
-        return group;
-    }
-
-    public void setGroup(int group) {
-        this.group = group;
-    }
-
     public Set<Planner> getPlanners() {
         return planners;
     }
@@ -136,7 +126,6 @@ public class User implements Serializable {
                 ", year=" + year +
                 ", department='" + department + '\'' +
                 ", section='" + section + '\'' +
-                ", group='" + group + '\'' +
                 '}';
     }
 

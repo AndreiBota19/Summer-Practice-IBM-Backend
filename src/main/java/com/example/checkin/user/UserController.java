@@ -1,10 +1,12 @@
 package com.example.checkin.user;
 
+import com.example.checkin.planner.Planner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/users")
@@ -33,6 +35,12 @@ public class UserController {
     public ResponseEntity<User> getUserById(@PathVariable("userId") Long userId){
         User user = userService.findUserById(userId);
         return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "{userId}/planners")
+    public ResponseEntity<Set<Planner>> getStudentPlanners(@PathVariable("userId") Long userId){
+        Set<Planner> planners = userService.getStudentPlanners(userId);
+        return new ResponseEntity<>(planners, HttpStatus.OK);
     }
 
     @GetMapping(path = "/guests")

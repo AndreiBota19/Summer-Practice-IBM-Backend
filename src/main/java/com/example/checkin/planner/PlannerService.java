@@ -33,6 +33,26 @@ public class PlannerService {
         this.classroomRepository = classroomRepository;
     }
 
+    public void addPlanner(String time, Long classroomId, Long courseId) {
+
+        Classroom classroom = classroomRepository.findClassroomById(classroomId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Classroom with id: "+ classroomId + " not found!")
+        );
+        Course course = courseRepository.findCourseById(courseId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course with id: "+ courseId + " not found!")
+        );
+        Planner planner = new Planner(time, course, classroom);
+
+        classroom.addPlanner(planner);
+        classroomRepository.save(classroom);
+    }
+
+    public Planner findPlannerById(Long plannerId) {
+        return plannerRepository.findPlannerById(plannerId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Planner with id: " + plannerId +" was not found")
+        );
+    }
+
     public List<Planner> findAllPlanners(){
         return plannerRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
     }
@@ -69,20 +89,6 @@ public class PlannerService {
         return planners.stream().map(this::mapEntityToDto).collect(Collectors.toList());
     }
 
-    public void addPlanner(String time, Long classroomId, Long courseId) {
-
-        Classroom classroom = classroomRepository.findClassroomById(classroomId).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Classroom with id: "+ classroomId + " not found!")
-        );
-        Course course = courseRepository.findCourseById(courseId).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course with id: "+ courseId + " not found!")
-        );
-        Planner planner = new Planner(time, course, classroom);
-
-        classroom.addPlanner(planner);
-        classroomRepository.save(classroom);
-    }
-
     public void deletePlanner(Long plannerId) {
         if(plannerRepository.existsById(plannerId)){
             plannerRepository.deletePlannerById(plannerId);
@@ -90,4 +96,5 @@ public class PlannerService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Planner with id: " + plannerId + " not found!");
         }
     }
+
 }

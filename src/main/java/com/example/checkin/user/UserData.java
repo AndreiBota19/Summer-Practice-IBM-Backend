@@ -17,10 +17,10 @@ public class UserData implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        User u1 = new User(UserRole.GUEST, "George", "Parker", null, null, null, null);
-        User u2 = new User(UserRole.STUDENT, "John", "Adams", 2, "Computer Science", "English", 2);
-        User u3 = new User(UserRole.TEACHER, "Thomas", "Jefferson", null, "Computer Science", "English", null);
-        User u4 = new User(UserRole.ADMIN, "James", "Madison", null, null, null, null);
+        User u1 = new User("George", "Parker", null, null, null, UserRole.GUEST);
+        User u2 = new User("John", "Adams", 2, "Computer Science", "English", UserRole.STUDENT);
+        User u3 = new User("Thomas", "Jefferson", null, "Computer Science", "English", UserRole.TEACHER);
+        User u4 = new User("James", "Madison", null, null, null, UserRole.ADMIN);
 
         if(userRepository.findUserByLastName(u1.getLastName()).isEmpty()){
             userRepository.save(u1);
