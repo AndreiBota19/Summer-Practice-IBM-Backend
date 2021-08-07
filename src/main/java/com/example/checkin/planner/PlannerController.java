@@ -19,11 +19,12 @@ public class PlannerController {
     }
 
     @PostMapping(path = "/classroom/{classroomId}/course/{courseId}")
-    public void addPlanner(
+    public ResponseEntity<Planner> addPlanner(
             @PathVariable("classroomId") Long classroomId,
             @PathVariable("courseId") Long courseId,
             @RequestBody String time){
         plannerService.addPlanner(time, classroomId, courseId);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @GetMapping(path = "/{plannerId}")
@@ -33,8 +34,8 @@ public class PlannerController {
     }
 
     @GetMapping(path = "/all")
-    public ResponseEntity<List<Planner>> getAllPlanners(){
-        List<Planner> planners = plannerService.findAllPlanners();
+    public ResponseEntity<List<PlannerDTO>> getAllPlanners(){
+        List<PlannerDTO> planners = plannerService.findAllPlanners();
         return new ResponseEntity<>(planners, HttpStatus.OK);
     }
 
