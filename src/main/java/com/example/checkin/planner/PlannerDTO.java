@@ -18,12 +18,11 @@ public class PlannerDTO {
     public PlannerDTO() {
     }
 
-    public PlannerDTO(Long id, String time, Long courseId, Long classroomId, Integer remainingPlaces) {
+    public PlannerDTO(Long id, String time, Long courseId, Long classroomId) {
         this.id = id;
         this.time = time;
         this.courseId = courseId;
         this.classroomId = classroomId;
-        this.remainingPlaces = remainingPlaces;
     }
 
     public Long getId() {

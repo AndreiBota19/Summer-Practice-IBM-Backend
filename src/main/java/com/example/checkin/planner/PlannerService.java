@@ -53,8 +53,9 @@ public class PlannerService {
         );
     }
 
-    public List<Planner> findAllPlanners(){
-        return plannerRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
+    public List<PlannerDTO> findAllPlanners(){
+        List<Planner> planners = plannerRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
+        return mapEntitiesToDTO(planners);
     }
 
     public void assignStudentToPlanner(Long plannerId, Long userId) {
