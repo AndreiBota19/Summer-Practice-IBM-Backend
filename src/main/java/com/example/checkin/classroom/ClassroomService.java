@@ -30,13 +30,48 @@ public class ClassroomService {
         this.featureRepository = featureRepository;
     }
 
-    public void addClassroom(Classroom classroom){
-        Optional<Classroom> classroomOptional = classroomRepository.findClassroomByName(classroom.getName());
-        if (classroomOptional.isPresent()){
-            throw new IllegalStateException("Classroom with name: " + classroom.getName() + " already exists");
+//    public void addClassroom(Classroom classroom) {
+//        Optional<Classroom> classroomOptional = classroomRepository.findClassroomByName(classroom.getName());
+//        if (classroomOptional.isPresent()) {
+//            throw new IllegalStateException("Classroom with name: " + classroom.getName() + " already exists");
+//        }
+//        classroomRepository.save(classroom);
+//    }
+
+    public void addClassroom(Classroom classroom) {
+        Classroom classroomToSave = new Classroom();
+        classroomToSave.setName(classroom.getName());
+        classroomToSave.setLocation(classroom.getLocation());
+        classroomToSave.setCapacity(classroom.getCapacity());
+
+        Set<Feature> features = classroom.getFeatures();
+        System.out.println("FEATURES: " + features);
+        for (Feature feature : features) {
+            Optional<Feature> featureOptional = featureRepository.findFeatureByName(feature.getName());
+            if (featureOptional.isPresent()){
+                classroomToSave.assignFeature(featureOptional.get());
+            } else {
+                System.out.println("feature doesnt exist");
+            }
         }
-        classroomRepository.save(classroom);
+
+        classroomRepository.save(classroomToSave);
     }
+
+//    public void assignFeatureToClassroom(Long classroomId, Feature feature){
+//        Classroom classroom = classroomRepository.findClassroomById(classroomId).orElseThrow(
+//                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Classroom with id: " + classroomId + " not found!")
+//        );
+//        Optional<Feature> featureOptional = featureRepository.findFeatureByName(feature.getName());
+//        if (featureOptional.isEmpty()){
+//            featureRepository.save(feature);
+//            classroom.assignFeature(feature);
+//        }
+//        else {
+//            classroom.assignFeature(featureOptional.get());
+//        }
+//        classroomRepository.save(classroom);
+//    }
 
     public void deleteClassroom(Long id){
         if (classroomRepository.existsById(id)){
@@ -74,7 +109,7 @@ public class ClassroomService {
 
     }
 
-    public Set<Long> getClassroomFeatures(Long classroomId){
+    public Set<Feature> getClassroomFeatures(Long classroomId){
         Classroom classroom = classroomRepository.findClassroomById(classroomId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Classroom with id: "+ classroomId + " not found!")
         );
@@ -92,15 +127,18 @@ public class ClassroomService {
         return classrooms.stream().map(this::mapEntityToDto).collect(Collectors.toList());
     }
 
-    public void assignFeatureToClassroom(Long classroomId, Long featureId){
+    public void assignFeatureToClassroom(Long classroomId, Feature feature){
         Classroom classroom = classroomRepository.findClassroomById(classroomId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Classroom with id: " + classroomId + " not found!")
         );
-        Feature feature = featureRepository.findFeatureById(featureId).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Feature with id: " + featureId + " not found!")
-        );
-
-        classroom.assignFeature(feature);
+        Optional<Feature> featureOptional = featureRepository.findFeatureByName(feature.getName());
+        if (featureOptional.isEmpty()){
+            featureRepository.save(feature);
+            classroom.assignFeature(feature);
+        }
+        else {
+            classroom.assignFeature(featureOptional.get());
+        }
         classroomRepository.save(classroom);
     }
 

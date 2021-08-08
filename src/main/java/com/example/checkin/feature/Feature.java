@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
+@JsonIgnoreProperties({ "classroomList" })
+
 public class Feature {
 
     @Id

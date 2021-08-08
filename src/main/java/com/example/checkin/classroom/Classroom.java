@@ -81,12 +81,8 @@ public class Classroom {
 
     public void setCapacity(Integer capacity) { this.capacity = capacity; }
 
-    public Set<Long> getFeatures() {
-        Set<Long> featureSet = new HashSet<>();
-        for (Feature feature: features){
-            featureSet.add(feature.getId());
-        }
-        return featureSet;
+    public Set<Feature> getFeatures() {
+        return features;
     }
 
     public void setFeatures(Set<Feature> features) {
