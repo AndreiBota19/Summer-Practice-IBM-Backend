@@ -52,24 +52,24 @@ public class ClassroomController {
         classroomService.deleteClassroom(classroomId);
     }
 
-    @PutMapping(path = "/{classroomId}/feature/{featureId}")
-    public void assignFeatureToClassroom(
-            @PathVariable Long classroomId,
-            @PathVariable Long featureId){
-        classroomService.assignFeatureToClassroom(classroomId, featureId);
-    }
+//    @PatchMapping(path = "/{classroomId}")
+//    public void assignFeatureToClassroom(
+//            @PathVariable("classroomId") Long classroomId,
+//            @RequestBody Feature feature){
+//        classroomService.assignFeatureToClassroom(classroomId, feature);
+//    }
 
     @GetMapping(path = "/{classroomId}/features")
-    public ResponseEntity<Set<Long>> getFeatures(@PathVariable Long classroomId){
-        Set<Long> features = classroomService.getClassroomFeatures(classroomId);
+    public ResponseEntity<Set<Feature>> getFeatures(@PathVariable Long classroomId){
+        Set<Feature> features = classroomService.getClassroomFeatures(classroomId);
         return new ResponseEntity<>(features, HttpStatus.OK);
     }
 
-    @PatchMapping(path = "/{classroomId}")
-    public void partialUpdateClassroom(
-            @PathVariable("classroomId") Long classroomId,
-            @RequestBody Map<String, Object> request){
-        classroomService.partialUpdateClassroom(classroomId, request);
-    }
+//    @PatchMapping(path = "/{classroomId}")
+//    public void partialUpdateClassroom(
+//            @PathVariable("classroomId") Long classroomId,
+//            @RequestBody Map<String, Object> request){
+//        classroomService.partialUpdateClassroom(classroomId, request);
+//    }
 
 }
