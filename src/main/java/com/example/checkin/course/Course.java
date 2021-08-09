@@ -24,7 +24,7 @@ public class Course {
     private User teacher;
 
     @Column(nullable = false)
-    private int year;
+    private Integer year;
 
     @Column(nullable = false)
     private String section;
@@ -35,7 +35,7 @@ public class Course {
     public Course() {
     }
 
-    public Course(String name, int year, String section) {
+    public Course(String name, Integer year, String section) {
         this.name = name;
         this.year = year;
         this.section = section;
@@ -68,11 +68,11 @@ public class Course {
         this.teacher = teacher;
     }
 
-    public int getYear() {
+    public Integer getYear() {
         return year;
     }
 
-    public void setYear(int year) {
+    public void setYear(Integer year) {
         this.year = year;
     }
 

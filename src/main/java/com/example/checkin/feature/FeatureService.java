@@ -48,4 +48,14 @@ public class FeatureService {
         }
     }
 
+    public void updateFeature(Long featureId, Feature updatedFeature) {
+        System.out.println("RECEIVED: " + updatedFeature);
+        Feature feature = featureRepository.findFeatureById(featureId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Feature with id: " + featureId + " not found!")
+        );
+        if (updatedFeature.getName() != null  && !(updatedFeature.getName().equals(feature.getName()))){
+            feature.setName(updatedFeature.getName());
+        }
+        featureRepository.save(feature);
+    }
 }

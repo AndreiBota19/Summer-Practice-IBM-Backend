@@ -11,10 +11,7 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.lang.reflect.Field;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,12 +37,17 @@ public class ClassroomService {
 
     public void addClassroom(Classroom classroom) {
         Classroom classroomToSave = new Classroom();
+
+        Optional<Classroom> classroomOptional = classroomRepository.findClassroomByName(classroom.getName());
+        if (classroomOptional.isPresent()){
+            throw new IllegalStateException("Classroom with name: " + classroom.getName() + " already exists");
+        }
+
         classroomToSave.setName(classroom.getName());
         classroomToSave.setLocation(classroom.getLocation());
         classroomToSave.setCapacity(classroom.getCapacity());
 
         Set<Feature> features = classroom.getFeatures();
-        System.out.println("FEATURES: " + features);
         for (Feature feature : features) {
             Optional<Feature> featureOptional = featureRepository.findFeatureByName(feature.getName());
             if (featureOptional.isPresent()){
@@ -97,23 +99,40 @@ public class ClassroomService {
         Classroom classroom = classroomRepository.findClassroomById(id).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Classroom with id: " + id + " not found!")
         );
-        if (updatedClassroom.getName().length() > 0 && !(updatedClassroom.getName().equals(classroom.getName()))){
+        if (updatedClassroom.getName() != null && !(updatedClassroom.getName().equals(classroom.getName()))){
             classroom.setName(updatedClassroom.getName());
         }
-        if (updatedClassroom.getLocation().length() > 0 && !(updatedClassroom.getLocation().equals(classroom.getLocation()))){
+        if (updatedClassroom.getLocation() != null && !(updatedClassroom.getLocation().equals(classroom.getLocation()))){
             classroom.setLocation(updatedClassroom.getLocation());
         }
-        if (updatedClassroom.getCapacity() > 0 && !updatedClassroom.getCapacity().equals(classroom.getCapacity())){
+        if (updatedClassroom.getCapacity() != null && !updatedClassroom.getCapacity().equals(classroom.getCapacity())){
             classroom.setCapacity(updatedClassroom.getCapacity());
         }
 
+        if (updatedClassroom.getFeatures() != null) {
+            classroom.removeAllFeatures();
+            Set<Feature> features = updatedClassroom.getFeatures();
+            for (Feature feature : features) {
+                Optional<Feature> featureOptional = featureRepository.findFeatureByName(feature.getName());
+                if (featureOptional.isPresent()) {
+                    classroom.assignFeature(featureOptional.get());
+                } else {
+                    System.out.println("feature doesnt exist");
+                }
+            }
+        }
+        classroomRepository.save(classroom);
     }
 
-    public Set<Feature> getClassroomFeatures(Long classroomId){
+    public Set<String> getClassroomFeatures(Long classroomId){
+        Set<String> features = new HashSet<>();
         Classroom classroom = classroomRepository.findClassroomById(classroomId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Classroom with id: "+ classroomId + " not found!")
         );
-        return classroom.getFeatures();
+        for (Feature feature: classroom.getFeatures()){
+            features.add(feature.getName());
+        }
+        return features;
     }
 
     public ClassroomDTO mapEntityToDto(Classroom classroom){
