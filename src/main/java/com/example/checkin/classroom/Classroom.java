@@ -89,6 +89,8 @@ public class Classroom {
         this.features = features;
     }
 
+    public void removeAllFeatures(){ this.features.clear();}
+
     public Set<Planner> getPlanners() {
         return planners;
     }

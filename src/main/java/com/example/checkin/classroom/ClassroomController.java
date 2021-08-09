@@ -60,8 +60,8 @@ public class ClassroomController {
 //    }
 
     @GetMapping(path = "/{classroomId}/features")
-    public ResponseEntity<Set<Feature>> getFeatures(@PathVariable Long classroomId){
-        Set<Feature> features = classroomService.getClassroomFeatures(classroomId);
+    public ResponseEntity<Set<String>> getFeatures(@PathVariable Long classroomId){
+        Set<String> features = classroomService.getClassroomFeatures(classroomId);
         return new ResponseEntity<>(features, HttpStatus.OK);
     }
 

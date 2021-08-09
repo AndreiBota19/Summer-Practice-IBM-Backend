@@ -52,15 +52,19 @@ public class CourseService {
     }
 
     public void updateCourse(Long id, Course updatedCourse){
-        Course cls = courseRepository.findCourseById(id).orElseThrow(
+        Course course = courseRepository.findCourseById(id).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course with id: " + id + " was not found!")
         );
-        if (updatedCourse.getName().length() > 0 && !(updatedCourse.getName().equals(cls.getName()))){
-            cls.setName(updatedCourse.getName());
+        if (updatedCourse.getName() != null && !(updatedCourse.getName().equals(course.getName()))){
+            course.setName(updatedCourse.getName());
         }
-        if (updatedCourse.getYear() > 0 && updatedCourse.getYear() != cls.getYear()){
-            cls.setYear(updatedCourse.getYear());
+        if (updatedCourse.getYear() != null && !updatedCourse.getYear().equals(course.getYear())){
+            course.setYear(updatedCourse.getYear());
         }
+        if (updatedCourse.getSection() != null && !(updatedCourse.getSection().equals(course.getSection()))){
+            course.setSection(updatedCourse.getSection());
+        }
+        courseRepository.save(course);
     }
 
     public List<CourseDTO> findAllCourses() {

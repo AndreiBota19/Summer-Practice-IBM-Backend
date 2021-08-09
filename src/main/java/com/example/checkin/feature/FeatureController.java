@@ -1,5 +1,6 @@
 package com.example.checkin.feature;
 
+import com.example.checkin.classroom.Classroom;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,13 @@ public class FeatureController {
     public ResponseEntity<List<Feature>> getAllFeatures(){
         List<Feature> featureList = featureService.findAllFeatures();
         return new ResponseEntity<>(featureList, HttpStatus.OK);
+    }
+
+    @PutMapping(path = "/{featureId}")
+    public void editFeature(
+            @PathVariable("featureId") Long featureId,
+            @RequestBody Feature feature){
+        featureService.updateFeature(featureId, feature);
     }
 
     @DeleteMapping(path = "/{featureId}")
