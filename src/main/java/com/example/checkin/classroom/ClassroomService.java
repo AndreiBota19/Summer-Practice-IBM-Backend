@@ -89,9 +89,8 @@ public class ClassroomService {
         );
     }
 
-    public List<ClassroomDTO> findAllClassrooms(){
-        List<Classroom> classrooms = classroomRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
-        return mapEntitiesToDTO(classrooms);
+    public List<Classroom> findAllClassrooms(){
+        return classroomRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
     }
 
 
@@ -105,11 +104,11 @@ public class ClassroomService {
         if (updatedClassroom.getLocation() != null && !(updatedClassroom.getLocation().equals(classroom.getLocation()))){
             classroom.setLocation(updatedClassroom.getLocation());
         }
-        if (updatedClassroom.getCapacity() != null && !updatedClassroom.getCapacity().equals(classroom.getCapacity())){
+        if (updatedClassroom.getCapacity() != null && !(updatedClassroom.getCapacity().equals(classroom.getCapacity()))){
             classroom.setCapacity(updatedClassroom.getCapacity());
         }
 
-        if (updatedClassroom.getFeatures() != null) {
+        if (updatedClassroom.getFeatures() != null && !(updatedClassroom.getFeatures().equals(classroom.getFeatures()))) {
             classroom.removeAllFeatures();
             Set<Feature> features = updatedClassroom.getFeatures();
             for (Feature feature : features) {
@@ -139,6 +138,7 @@ public class ClassroomService {
         ClassroomDTO classroomDto = new ClassroomDTO();
         classroomDto.setId(classroom.getId());
         classroomDto.setName(classroom.getName());
+        classroomDto.setCapacity(classroom.getCapacity());
         return classroomDto;
     }
 
