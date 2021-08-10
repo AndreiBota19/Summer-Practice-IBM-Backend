@@ -1,14 +1,11 @@
 package com.example.checkin.classroom;
 
-import com.example.checkin.feature.Feature;
-import com.example.checkin.feature.FeatureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -29,8 +26,8 @@ public class ClassroomController {
     }
 
     @GetMapping(path = "/all")
-    public ResponseEntity<List<ClassroomDTO>> getAllClassrooms(){
-        List<ClassroomDTO> classrooms = classroomService.findAllClassrooms();
+    public ResponseEntity<List<Classroom>> getAllClassrooms(){
+        List<Classroom> classrooms = classroomService.findAllClassrooms();
         return new ResponseEntity<>(classrooms, HttpStatus.OK);
     }
 

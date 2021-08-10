@@ -67,9 +67,8 @@ public class CourseService {
         courseRepository.save(course);
     }
 
-    public List<CourseDTO> findAllCourses() {
-        List<Course> courses = courseRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
-        return mapEntitiesToDTO(courses);
+    public List<Course> findAllCourses() {
+        return courseRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
     }
 
     public CourseDTO mapEntityToDto(Course course){
