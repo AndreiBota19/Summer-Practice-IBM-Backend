@@ -19,7 +19,7 @@ public class Planner {
     private Long id;
 
     @Column(nullable = false)
-    private String time;
+    private String startTime;
 
     @ManyToOne
     @JoinColumn(name = "course_id")
@@ -44,8 +44,8 @@ public class Planner {
     public Planner() {
     }
 
-    public Planner(String time, Course course, Classroom classroom) {
-        this.time = time;
+    public Planner(String startTime, Course course, Classroom classroom) {
+        this.startTime = startTime;
         this.course = course;
         this.classroom = classroom;
         this.remainingPlaces = classroom.getCapacity();
@@ -59,12 +59,12 @@ public class Planner {
         this.id = id;
     }
 
-    public String getTime() {
-        return time;
+    public String getStartTime() {
+        return startTime;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
     }
 
     public Course getCourse() {
@@ -111,5 +111,17 @@ public class Planner {
 
     public void assignStudent(User student) {
         enrolledStudents.add(student);
+    }
+
+    @Override
+    public String toString() {
+        return "Planner{" +
+                "id=" + id +
+                ", startTime='" + startTime + '\'' +
+                ", course=" + course +
+                ", classroom=" + classroom +
+                ", enrolledStudents=" + enrolledStudents +
+                ", remainingPlaces=" + remainingPlaces +
+                '}';
     }
 }

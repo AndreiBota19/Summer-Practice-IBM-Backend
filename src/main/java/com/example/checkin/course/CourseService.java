@@ -75,6 +75,8 @@ public class CourseService {
         CourseDTO courseDTO = new CourseDTO();
         courseDTO.setId(course.getId());
         courseDTO.setName(course.getName());
+        courseDTO.setYear(course.getYear());
+        courseDTO.setSection(course.getSection());
         return courseDTO;
     }
 
