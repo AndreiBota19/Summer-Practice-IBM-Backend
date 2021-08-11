@@ -9,15 +9,25 @@ public class ClassroomDTO {
 
     private Long id;
     private String name;
+    private String location;
     private Integer capacity;
 
     public ClassroomDTO() {
     }
 
-    public ClassroomDTO(Long id, String name, Integer capacity) {
+    public ClassroomDTO(Long id, String name, String location, Integer capacity) {
         this.id = id;
         this.name = name;
+        this.location = location;
         this.capacity = capacity;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public Long getId() {
@@ -49,6 +59,7 @@ public class ClassroomDTO {
         return "ClassroomDTO{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", location='" + location + '\'' +
                 ", capacity=" + capacity +
                 '}';
     }

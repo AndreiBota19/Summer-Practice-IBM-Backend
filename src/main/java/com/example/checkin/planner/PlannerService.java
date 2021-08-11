@@ -1,8 +1,10 @@
 package com.example.checkin.planner;
 
 import com.example.checkin.classroom.Classroom;
+import com.example.checkin.classroom.ClassroomDTO;
 import com.example.checkin.classroom.ClassroomRepository;
 import com.example.checkin.course.Course;
+import com.example.checkin.course.CourseDTO;
 import com.example.checkin.course.CourseRepository;
 import com.example.checkin.user.User;
 import com.example.checkin.user.UserRepository;
@@ -76,18 +78,36 @@ public class PlannerService {
         else throw new IllegalStateException("Only students are allowed to enroll");
     }
 
-    public PlannerDTO mapEntityToDto(Planner planner){
+    public PlannerDTO mapPlannerToDto(Planner planner){
         PlannerDTO plannerDto = new PlannerDTO();
         plannerDto.setId(planner.getId());
-        plannerDto.setTime(planner.getTime());
-        plannerDto.setCourseId(planner.getCourse().getId());
-        plannerDto.setClassroomId(planner.getClassroom().getId());
+        plannerDto.setStartTime(planner.getStartTime());
+        plannerDto.setCourse(mapCourseToDto(planner.getCourse()));
+        plannerDto.setClassroom(mapClassroomToDto(planner.getClassroom()));
         plannerDto.setRemainingPlaces(planner.getRemainingPlaces());
         return plannerDto;
     }
 
+    public ClassroomDTO mapClassroomToDto(Classroom classroom){
+        ClassroomDTO classroomDto = new ClassroomDTO();
+        classroomDto.setId(classroom.getId());
+        classroomDto.setName(classroom.getName());
+        classroomDto.setLocation(classroom.getLocation());
+        classroomDto.setCapacity(classroom.getCapacity());
+        return classroomDto;
+    }
+
+    public CourseDTO mapCourseToDto(Course course){
+        CourseDTO courseDTO = new CourseDTO();
+        courseDTO.setId(course.getId());
+        courseDTO.setName(course.getName());
+        courseDTO.setYear(course.getYear());
+        courseDTO.setSection(course.getSection());
+        return courseDTO;
+    }
+
     public List<PlannerDTO> mapEntitiesToDTO(List<Planner> planners){
-        return planners.stream().map(this::mapEntityToDto).collect(Collectors.toList());
+        return planners.stream().map(this::mapPlannerToDto).collect(Collectors.toList());
     }
 
     public void deletePlanner(Long plannerId) {
