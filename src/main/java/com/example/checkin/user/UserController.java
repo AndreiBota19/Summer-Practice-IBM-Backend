@@ -37,6 +37,18 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
+    @GetMapping(path = "/admin/{adminId}")
+    public ResponseEntity<Boolean> checkIfAdminExists(@PathVariable("adminId") Long adminId){
+        Boolean exists =  userService.checkIfAdminExists(adminId);
+        return new ResponseEntity<Boolean>(exists, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/teacher/{teacherId}")
+    public ResponseEntity<Boolean> checkIfTeacherExists(@PathVariable("teacherId") Long teacherId){
+        Boolean exists =  userService.checkIfTeacherExists(teacherId);
+        return new ResponseEntity<Boolean>(exists, HttpStatus.OK);
+    }
+
     @GetMapping(path = "{userId}/planners")
     public ResponseEntity<Set<Planner>> getStudentPlanners(@PathVariable("userId") Long userId){
         Set<Planner> planners = userService.getStudentPlanners(userId);

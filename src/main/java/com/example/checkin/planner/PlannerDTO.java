@@ -44,7 +44,37 @@ public class PlannerDTO {
         this.id = id;
     }
 
-    public String getStartTime() { return startTime; }
+    public String getStartTime() {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+        Date date = null;
+        try {
+            date = dateFormat.parse(this.startTime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        Calendar cal = Calendar.getInstance();
+        if (date != null) {
+            cal.setTime(date);
+        }
+
+        int hour = cal.get(Calendar.HOUR);
+        int minute = cal.get(Calendar.MINUTE);
+
+        StringBuilder time = new StringBuilder();
+        if (hour < 10){
+            time.append(0).append(hour);
+        } else {
+            time.append(hour);
+        }
+        time.append(":");
+        if (minute < 10){
+            time.append(0).append(minute);
+        } else {
+            time.append(minute);
+        }
+        return time.toString();
+
+    }
 
     public void setStartTime(String startTime) { this.startTime = startTime; }
 
