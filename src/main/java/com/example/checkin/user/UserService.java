@@ -1,6 +1,8 @@
 package com.example.checkin.user;
 
 import com.example.checkin.planner.Planner;
+import com.example.checkin.planner.PlannerDTO;
+import com.example.checkin.planner.PlannerService;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -16,9 +18,11 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PlannerService plannerService;
 
-    public UserService(UserRepository userRepo) {
+    public UserService(UserRepository userRepo, PlannerService plannerService) {
         this.userRepository = userRepo;
+        this.plannerService = plannerService;
     }
 
     public void addUser(User user) {
@@ -65,12 +69,15 @@ public class UserService {
         return users.stream().map(this::mapEntityToDto).collect(Collectors.toList());
     }
 
-    public Set<Planner> getStudentPlanners(Long userId) {
+    public List<PlannerDTO> getStudentPlanners(Long userId) {
         User user = userRepository.findUserById(userId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id: " + userId +" was not found")
         );
         if (user.getRole().equals(UserRole.STUDENT)){
-            return user.getPlanners();
+            Set<Planner> planners = user.getPlanners();
+            List<Planner> plannerList = List.copyOf(planners);
+
+            return this.plannerService.mapEntitiesToDTO(plannerList);
         }
         else {
             throw new IllegalStateException("Only students have planners");
@@ -91,5 +98,13 @@ public class UserService {
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id: " + teacherId +" was not found")
         );
         return teachers.contains(teacher);
+    }
+
+    public Boolean checkIfStudentExists(Long studentId) {
+        List<User> students = userRepository.findAllByRole(UserRole.STUDENT);
+        User student = userRepository.findUserById(studentId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id: " + studentId +" was not found")
+        );
+        return students.contains(student);
     }
 }

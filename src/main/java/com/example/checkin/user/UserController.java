@@ -1,6 +1,7 @@
 package com.example.checkin.user;
 
 import com.example.checkin.planner.Planner;
+import com.example.checkin.planner.PlannerDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -49,9 +50,15 @@ public class UserController {
         return new ResponseEntity<Boolean>(exists, HttpStatus.OK);
     }
 
-    @GetMapping(path = "{userId}/planners")
-    public ResponseEntity<Set<Planner>> getStudentPlanners(@PathVariable("userId") Long userId){
-        Set<Planner> planners = userService.getStudentPlanners(userId);
+    @GetMapping(path = "/student/{studentId}")
+    public ResponseEntity<Boolean> checkIfStudentExists(@PathVariable("studentId") Long studentId){
+        Boolean exists =  userService.checkIfStudentExists(studentId);
+        return new ResponseEntity<Boolean>(exists, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/{userId}/planners")
+    public ResponseEntity<List<PlannerDTO>> getStudentPlanners(@PathVariable("userId") Long userId){
+        List<PlannerDTO> planners = userService.getStudentPlanners(userId);
         return new ResponseEntity<>(planners, HttpStatus.OK);
     }
 

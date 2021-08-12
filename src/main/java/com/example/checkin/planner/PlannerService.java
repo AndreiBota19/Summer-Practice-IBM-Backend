@@ -56,7 +56,7 @@ public class PlannerService {
     }
 
     public List<PlannerDTO> findAllPlanners(){
-        List<Planner> planners = plannerRepository.findAll(Sort.by(Sort.Direction.ASC, "startTime"));
+        List<Planner> planners = plannerRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
         return mapEntitiesToDTO(planners);
     }
 
