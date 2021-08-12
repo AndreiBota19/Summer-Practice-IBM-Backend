@@ -25,15 +25,17 @@ public class PlannerDTO {
     private ClassroomDTO classroom;
     private Integer remainingPlaces;
     private Integer dayOfWeek;
+    private Set<Long> enrolledStudents;
 
     public PlannerDTO() {
     }
 
-    public PlannerDTO(Long id, String startTime, CourseDTO course, ClassroomDTO classroom) {
+    public PlannerDTO(Long id, String startTime, CourseDTO course, ClassroomDTO classroom, Set<Long> enrolledStudents) {
         this.id = id;
         this.startTime = startTime;
         this.course = course;
         this.classroom = classroom;
+        this.enrolledStudents = enrolledStudents;
     }
 
     public Long getId() {
@@ -100,6 +102,14 @@ public class PlannerDTO {
 
     public void setRemainingPlaces(Integer remainingPlaces) {
         this.remainingPlaces = remainingPlaces;
+    }
+
+    public Set<Long> getEnrolledStudents() {
+        return enrolledStudents;
+    }
+
+    public void setEnrolledStudents(Set<Long> enrolledStudents) {
+        this.enrolledStudents = enrolledStudents;
     }
 
     public Integer getDayOfWeek() {

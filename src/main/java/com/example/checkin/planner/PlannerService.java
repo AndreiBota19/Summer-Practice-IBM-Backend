@@ -60,7 +60,7 @@ public class PlannerService {
         return mapEntitiesToDTO(planners);
     }
 
-    public void assignStudentToPlanner(Long plannerId, Long userId) {
+    public Planner assignStudentToPlanner(Long plannerId, Long userId) {
         Planner planner = plannerRepository.findPlannerById(plannerId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Planner with id: " + plannerId + " not found!")
         );
@@ -72,10 +72,10 @@ public class PlannerService {
             if (!(planner.getEnrolledStudents().contains(user.getId()))){
                 planner.assignStudent(user);
                 planner.setRemainingPlaces(planner.getRemainingPlaces()-1);
-                plannerRepository.save(planner);
             }
         }
         else throw new IllegalStateException("Only students are allowed to enroll");
+        return plannerRepository.save(planner);
     }
 
     public PlannerDTO mapPlannerToDto(Planner planner){
@@ -85,6 +85,7 @@ public class PlannerService {
         plannerDto.setCourse(mapCourseToDto(planner.getCourse()));
         plannerDto.setClassroom(mapClassroomToDto(planner.getClassroom()));
         plannerDto.setRemainingPlaces(planner.getRemainingPlaces());
+        plannerDto.setEnrolledStudents(planner.getEnrolledStudents());
         return plannerDto;
     }
 
@@ -118,4 +119,13 @@ public class PlannerService {
         }
     }
 
+    public Boolean checkIfPlannerHasUser(Long plannerId, Long studentId) {
+        List<Planner> planners = plannerRepository.findAll();
+        for (Planner planner: planners){
+            if (planner.getEnrolledStudents().contains(studentId)){
+                return true;
+            }
+        }
+        return false;
+    }
 }
