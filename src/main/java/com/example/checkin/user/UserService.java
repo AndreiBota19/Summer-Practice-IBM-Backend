@@ -1,6 +1,5 @@
 package com.example.checkin.user;
 
-import com.example.checkin.feature.Feature;
 import com.example.checkin.planner.Planner;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -9,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -77,5 +75,21 @@ public class UserService {
         else {
             throw new IllegalStateException("Only students have planners");
         }
+    }
+
+    public Boolean checkIfAdminExists(Long adminId) {
+        List<User> admins = userRepository.findAllByRole(UserRole.ADMIN);
+        User admin = userRepository.findUserById(adminId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id: " + adminId +" was not found")
+        );
+        return admins.contains(admin);
+    }
+
+    public Boolean checkIfTeacherExists(Long teacherId) {
+        List<User> teachers = userRepository.findAllByRole(UserRole.TEACHER);
+        User teacher = userRepository.findUserById(teacherId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id: " + teacherId +" was not found")
+        );
+        return teachers.contains(teacher);
     }
 }
